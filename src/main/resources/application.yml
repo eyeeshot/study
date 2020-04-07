@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: study-aws
+  tomcat:
+    accesslog:
+      enabled: true
+      pattern: '{"time": "%{yyyy-MM-dd HH:mm:ssZ}t", "X-Forwarded-For": "%{X-Forwarded-For}i", "ip": "%{org.apache.tomcat.remoteAddr}r", "requestTime": "%T", "status": "%s", "size": "%B", "userAgent": "%{User-Agent}i", "referer": "%{Referer}i", "uri": "%U", "method": "%m", "args": "%q", "Accept-Encoding": "%{Accept-Encoding}i"}'
+      directory: ./
+
+server:
+  port: 8080
+
+custom:
+  message: Hello, study!!!!!!
+
+config:
+  aws:
+    region: ap-northeast-2
+    stsEndpoint: sts.ap-northeast-2.amazonaws.com:443
