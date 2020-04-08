@@ -3,11 +3,13 @@ package com.eyeeshot.study.type.service;
 import com.eyeeshot.study.context.AwsIotContext;
 import com.eyeeshot.study.type.domain.request.CreateTypeRequestDto;
 import com.eyeeshot.study.type.domain.request.ListTypeRequestDto;
+import com.eyeeshot.study.type.domain.request.TagDto;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 import software.amazon.awssdk.services.iot.model.CreateThingTypeRequest;
 import software.amazon.awssdk.services.iot.model.CreateThingTypeResponse;
 import software.amazon.awssdk.services.iot.model.DescribeThingTypeRequest;
@@ -15,6 +17,8 @@ import software.amazon.awssdk.services.iot.model.DescribeThingTypeResponse;
 import software.amazon.awssdk.services.iot.model.ListThingTypesRequest;
 import software.amazon.awssdk.services.iot.model.ListThingTypesResponse;
 import software.amazon.awssdk.services.iot.model.Tag;
+import software.amazon.awssdk.services.iot.model.Tag.Builder;
+import software.amazon.awssdk.services.iot.model.ThingTypeProperties;
 
 @Component
 public class TypeService {
@@ -59,21 +63,37 @@ public class TypeService {
     }
 
     public Map<String, Object> createType(CreateTypeRequestDto createTypeRequestDto) {
+
         Map<String, Object> result = new HashMap<String, Object>();
 
-        CreateThingTypeRequest createThingTypeRequest = CreateThingTypeRequest.builder()
-            .thingTypeName(createTypeRequestDto.getName())
+        System.out.println(createTypeRequestDto.getTags());
 
-            // 이부분이 궁금함.. 만약 createTypeRequestDto 에 getTypeProperties 가 NULL 일경우 에러나는데 그럼 어떻게 처리해야함?
-//            if (!ObjectUtils.isEmpty(createTypeRequestDto.getTypeProperties())) {
-//                createThingTypeRequest.thingTypeProperties(Collection<TypePropertiesDto> createTypeRequestDto.getTypeProperties());
-//           }
-//           요렇게 처리해야되나?
+        CreateThingTypeRequest.Builder createThingTypeRequest = CreateThingTypeRequest.builder()
+            .thingTypeName(createTypeRequestDto.getName());
 
-            .tags((Consumer<Tag.Builder>) createTypeRequestDto.getTags())
-            .build();
+        if (!ObjectUtils.isEmpty(createTypeRequestDto.getTypeProperties())) {
+            ThingTypeProperties thingTypeProperties = ThingTypeProperties.builder()
+                .searchableAttributes(createTypeRequestDto.getTypeProperties().getSearchableAttributes())
+                .thingTypeDescription(createTypeRequestDto.getTypeProperties().getTypeDescription())
+                .build();
+            createThingTypeRequest.thingTypeProperties(thingTypeProperties);
+        }
 
-        CreateThingTypeResponse createThingTypeResponse = awsIotContext.getIotClient().createThingType(createThingTypeRequest);
+        if (!ObjectUtils.isEmpty(createTypeRequestDto.getTags())) {
+            Builder tag = Tag.builder();
+            for (TagDto tagDto : createTypeRequestDto.getTags()
+            ) {
+                tag.key(tagDto.getKey());
+                tag.value(tagDto.getValue());
+            }
+            createThingTypeRequest.tags(tag.build());
+        }
+
+        CreateThingTypeResponse createThingTypeResponse = awsIotContext.getIotClient().createThingType(createThingTypeRequest.build());
+
+        result.put("name",createThingTypeResponse.thingTypeName());
+        result.put("id",createThingTypeResponse.thingTypeId());
+        result.put("arn",createThingTypeResponse.thingTypeArn());
 
         return result;
     }

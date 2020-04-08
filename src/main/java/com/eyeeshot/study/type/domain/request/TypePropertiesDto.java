@@ -9,9 +9,9 @@ import lombok.Singular;
 @Getter
 @Setter
 public class TypePropertiesDto {
-    long seriaVersionUID = 1L;
-    String typeDescription;
-    @Singular List<String> searchableAttributes;
+    private long seriaVersionUID = 1L;
+    private String typeDescription;
+    @Singular private List<String> searchableAttributes;
 
     @Builder
     private TypePropertiesDto(long seriaVersionUID, String typeDescription, List<String> searchableAttributes) {

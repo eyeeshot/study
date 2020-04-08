@@ -7,8 +7,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class TagDto {
-    String key;
-    String value;
+    private String key;
+    private String value;
 
     @Builder
     private TagDto(String key, String value) {
