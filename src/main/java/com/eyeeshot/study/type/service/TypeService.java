@@ -65,7 +65,11 @@ public class TypeService {
             .thingTypeName(createTypeRequestDto.getName())
 
             // 이부분이 궁금함.. 만약 createTypeRequestDto 에 getTypeProperties 가 NULL 일경우 에러나는데 그럼 어떻게 처리해야함?
-//            .thingTypeProperties((Consumer<Builder>) createTypeRequestDto.getTypeProperties())
+//            if (!ObjectUtils.isEmpty(createTypeRequestDto.getTypeProperties())) {
+//                createThingTypeRequest.thingTypeProperties(Collection<TypePropertiesDto> createTypeRequestDto.getTypeProperties());
+//           }
+//           요렇게 처리해야되나?
+
             .tags((Consumer<Tag.Builder>) createTypeRequestDto.getTags())
             .build();
 
