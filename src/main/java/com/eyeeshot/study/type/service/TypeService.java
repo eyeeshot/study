@@ -21,14 +21,14 @@ public class TypeService {
 
     private final AwsIotContext awsIotContext;
 
-    private final Map<String, Object> result = new HashMap<String, Object>();
-
     @Autowired
     public TypeService (AwsIotContext awsIotContext) {
         this.awsIotContext = awsIotContext;
     }
 
     public Map<String, Object> listTypes(ListTypeRequestDto listTypeRequestDto) {
+        Map<String, Object> result = new HashMap<String, Object>();
+
         ListThingTypesRequest listThingTypesRequest = ListThingTypesRequest.builder()
             .thingTypeName(listTypeRequestDto.getName())
             .maxResults(listTypeRequestDto.getMaxResults())
@@ -43,6 +43,7 @@ public class TypeService {
     }
 
     public Map<String, Object> type(String typeName) {
+        Map<String, Object> result = new HashMap<String, Object>();
 
         DescribeThingTypeRequest describeThingRequest = DescribeThingTypeRequest.builder().thingTypeName(typeName).build();
         DescribeThingTypeResponse describeThingTypeResponse = awsIotContext.getIotClient().describeThingType(describeThingRequest);
@@ -58,8 +59,12 @@ public class TypeService {
     }
 
     public Map<String, Object> createType(CreateTypeRequestDto createTypeRequestDto) {
+        Map<String, Object> result = new HashMap<String, Object>();
+
         CreateThingTypeRequest createThingTypeRequest = CreateThingTypeRequest.builder()
             .thingTypeName(createTypeRequestDto.getName())
+
+            // 이부분이 궁금함.. 만약 createTypeRequestDto 에 getTypeProperties 가 NULL 일경우 에러나는데 그럼 어떻게 처리해야함?
 //            .thingTypeProperties((Consumer<Builder>) createTypeRequestDto.getTypeProperties())
             .tags((Consumer<Tag.Builder>) createTypeRequestDto.getTags())
             .build();

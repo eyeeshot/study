@@ -19,8 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class TypeController {
 
     final private TypeService typeService;
-    private Object result = null;
-    ResponseModel responseModel = new ResponseModel();
 
     @Autowired
     public TypeController(TypeService typeService){
@@ -29,6 +27,9 @@ public class TypeController {
 
     @RequestMapping(value = "", method = {RequestMethod.GET})
     public ResponseEntity<String> listType(ListTypeRequestDto listTypeRequestDto) {
+        ResponseModel responseModel = new ResponseModel();
+        Object result = null;
+
         Map<String, Object> listTypeResponse = typeService.listTypes(listTypeRequestDto);
 
         result = listTypeResponse;
@@ -40,6 +41,9 @@ public class TypeController {
 
     @RequestMapping(value = "/{name}", method = {RequestMethod.GET})
     public ResponseEntity<String> type(@PathVariable("name") @NotBlank String name) {
+        ResponseModel responseModel = new ResponseModel();
+        Object result = null;
+
         Map<String, Object> listTypeResponse = typeService.type(name);
 
         if (listTypeResponse != null) {
@@ -53,13 +57,12 @@ public class TypeController {
 
     @RequestMapping(value = "", method = {RequestMethod.POST})
     public ResponseEntity<String> createType(@RequestBody CreateTypeRequestDto createTypeRequestDto) {
-        System.out.printf(String.valueOf(createTypeRequestDto));
+        ResponseModel responseModel = new ResponseModel();
+        Object result = null;
 
         Map<String, Object> createTypeResponse = typeService.createType(createTypeRequestDto);
 
-        result = createTypeResponse;
-
-        responseModel.setData(result);
+        responseModel.setData(createTypeResponse);
 
         return responseModel.toResponse();
     }
