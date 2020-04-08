@@ -7,11 +7,14 @@ import com.eyeeshot.study.type.service.TypeService;
 import java.util.Map;
 import javax.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -63,6 +66,18 @@ public class TypeController {
         Map<String, Object> createTypeResponse = typeService.createType(createTypeRequestDto);
 
         responseModel.setData(createTypeResponse);
+
+        return responseModel.toResponse();
+    }
+
+    @PatchMapping(value = "/type/{name}")
+    @ResponseStatus(value= HttpStatus.OK)
+    public ResponseEntity<String> deprecateType(@PathVariable("name") @NotBlank String name, @RequestBody DeprecateTypeRequestDto deprecateTypeRequestDto) {
+        ResponseModel responseModel = new ResponseModel();
+
+        Map<String, Object> deprecateType = typeService.deprecateType(name,deprecateTypeRequestDto);
+
+        responseModel.setData(deprecateType);
 
         return responseModel.toResponse();
     }

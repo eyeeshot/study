@@ -2,6 +2,7 @@ package com.eyeeshot.study.type.service;
 
 import com.eyeeshot.study.context.AwsIotContext;
 import com.eyeeshot.study.type.domain.request.CreateTypeRequestDto;
+import com.eyeeshot.study.type.domain.request.DeprecateTypeRequestDto;
 import com.eyeeshot.study.type.domain.request.ListTypeRequestDto;
 import com.eyeeshot.study.type.domain.request.TagDto;
 import java.util.HashMap;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import software.amazon.awssdk.services.iot.model.CreateThingTypeRequest;
 import software.amazon.awssdk.services.iot.model.CreateThingTypeResponse;
+import software.amazon.awssdk.services.iot.model.DeprecateThingTypeRequest;
+import software.amazon.awssdk.services.iot.model.DeprecateThingTypeResponse;
 import software.amazon.awssdk.services.iot.model.DescribeThingTypeRequest;
 import software.amazon.awssdk.services.iot.model.DescribeThingTypeResponse;
 import software.amazon.awssdk.services.iot.model.ListThingTypesRequest;
@@ -94,6 +97,21 @@ public class TypeService {
         result.put("name",createThingTypeResponse.thingTypeName());
         result.put("id",createThingTypeResponse.thingTypeId());
         result.put("arn",createThingTypeResponse.thingTypeArn());
+
+        return result;
+    }
+
+    public Map<String, Object> deprecateType(String name, DeprecateTypeRequestDto deprecateTypeRequestDto) {
+        Map<String, Object> result = new HashMap<String, Object>();
+
+        DeprecateThingTypeRequest deprecateThingTypeRequest = DeprecateThingTypeRequest.builder()
+            .thingTypeName(name)
+            .undoDeprecate(deprecateTypeRequestDto.getStatus())
+            .build();
+
+        DeprecateThingTypeResponse deprecateThingTypeResponse = awsIotContext.getIotClient().deprecateThingType(deprecateThingTypeRequest);
+
+        result.put("result",deprecateThingTypeResponse);
 
         return result;
     }
